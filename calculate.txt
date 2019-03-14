@@ -1,0 +1,7 @@
+calculate: function(component, event, helper) {
+		
+        var amt  = component.get("v.Amount");
+        var roi  =   component.get("v.Rateofinterest");
+        var finalamt = roi/100 *amt +amt;
+        component.set("v.Maturityamount",finalamt);
+	}
