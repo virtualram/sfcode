@@ -1,0 +1,18 @@
+({
+	savedata: function(component, event, helper) {
+        
+        var name = component.get("v.conObj.LastName");
+         var email = component.get("v.conObj.Email");
+        
+          var action = component.get("c.insertrecords");
+        action.setParams({Name1 : name,Email : email });
+        
+         	action.setCallback(this,function(a){
+               console.log(a.getReturnValue());
+              
+            } );
+        $A.enqueueAction(action);
+        
+		
+	}
+})
