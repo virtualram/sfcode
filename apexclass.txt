@@ -1,0 +1,15 @@
+ static  Contact cont ;
+    @AuraEnabled public static String  insertrecords(String Name1){
+        try{
+            cont = new Contact();
+            //cont.LastName = 'harbajan';
+            cont.LastName = Name1;
+            insert cont;
+            system.debug(cont.id);
+            
+        }catch(exception e){
+            system.debug(e.getMessage());
+            return e.getMessage();
+        }     
+        return cont.id;
+    }       
