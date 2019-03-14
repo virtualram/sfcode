@@ -1,0 +1,11 @@
+	<aura:attribute name="conObj" type="Contact" default="{'sobjectType':'Contact'}"/>
+
+
+ var event = $A.get('e.force:navigateToSObject');
+            event.setParams({
+                
+                "recordId":  x,                 
+                "slideDevName": "related"
+                
+            }); 
+            event.fire();  
