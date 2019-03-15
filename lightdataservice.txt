@@ -1,0 +1,248 @@
+<aura:component implements="lightning:actionOverride,force:lightningQuickAction,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,lightning:actionOverride,force:hasRecordId" >
+     <aura:dependency resource="markup://force:navigateToSObject" type="EVENT"/>
+   
+    <aura:attribute name="newContact" type="Object" access="private"/>
+    <aura:attribute name="simpleNewContact" type="Object" access="private"/>
+    <aura:attribute name="newContactError" type="String" access="private"/>
+    <aura:attribute name="showandhide" type="Boolean"  />
+   
+    
+    <force:recordData aura:id="contactRecordCreator"                      
+        recordId = "{!v.recordId}"               
+        layoutType="FULL"
+        targetRecord="{!v.newContact}"
+        targetFields="{!v.simpleNewContact}"
+        targetError="{!v.newContactError}" 
+        recordUpdated ="{!c.handlerecordUpdated}"
+        mode="EDIT"
+        />
+    
+    
+
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+<div aura:id ="god" style="height: 640px;" class="toggle">
+ <section aura:id="section1" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+
+      
+      <div  aura:id="MainDiv" >
+      
+      <div aura:id="modcont" class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+        <p>Sit nulla est ex deserunt exercitation anim occaecat. Nostrud ullamco deserunt aute id consequat veniam incididunt duis in sint irure nisi. Mollit officia cillum Lorem ullamco minim nostrud elit officia tempor esse quis. Cillum sunt ad dolore
+          quis aute consequat ipsum magna exercitation reprehenderit magna. Tempor cupidatat consequat elit dolor adipisicing.</p>
+        <p>Dolor eiusmod sunt ex incididunt cillum quis nostrud velit duis sit officia. Lorem aliqua enim laboris do dolor eiusmod officia. Mollit incididunt nisi consectetur esse laborum eiusmod pariatur proident. Eiusmod et adipisicing culpa deserunt nostrud
+          ad veniam nulla aute est. Labore esse esse cupidatat amet velit id elit consequat minim ullamco mollit enim excepteur ea.</p>
+
+          <lightning:input aura:id="contactField" type="email" name="email" label="Email"
+                value="{!v.simpleNewContact.Email}" />
+          </div>
+       <lightning:button label="Cancel" onclick="{!c.handleCancel}" class="slds-m-top_medium" />
+    </div>
+  </section>
+</div>
+    <!-- Display a header with details about the account -->
+    <div class="slds-page-header" role="banner">
+        <p class="slds-text-heading_label">{!v.simpleAccount.Name}</p>
+        <h1 class="slds-page-header__title slds-m-right_small
+            slds-truncate slds-align-left">Create New Contact</h1>
+    </div>
+
+    <!-- Display Lightning Data Service errors, if any -->
+  
+    <aura:if isTrue="{!not(empty(v.newContactError))}">
+        <div class="recordError">
+            <ui:message title="Error" severity="error" closable="true">
+                {!v.newContactError}
+            </ui:message>
+        </div>
+    </aura:if>
+
+    <!-- Display the new contact form -->
+     <lightning:input aura:id="contactField" name="firstName" label="First Name"
+                     value="{!v.simpleNewContact.FirstName}"/>
+  
+    <lightning:input aura:id="contactField" name="lastname" label="Last Name"
+                  value="{!v.simpleNewContact.LastName}" />
+            
+    <lightning:input  aura:id="contactField" name="title" label="Title"
+                  value="{!v.simpleNewContact.Title}" />
+    	
+             
+    
+ <div class="slds-section slds-is-open">
+<h3 class="slds-section__title">
+<button onclick="{!c.unhidesection}" aria-controls="expando-unique-id" aria-expanded="false" class="slds-button slds-section__title-action">
+
+<span class="slds-truncate" title="Section Title">Section Title</span>
+</button>
+</h3>
+        
+        
+         <aura:if isTrue="{!v.showandhide}">
+        <div>
+ 
+
+    <lightning:input aura:id="contactField" type="phone" name="phone" label="Phone Number"
+                     pattern="^(1?(-?\d{3})-?)?(\d{3})(-?\d{4})$"
+                     messageWhenPatternMismatch="The phone number must contain 7, 10, or 11 digits. Hyphens are optional."
+                   value="{!v.simpleNewContact.Phone}" required="true"/>
+    
+    <lightning:input aura:id="contactField" type="email" name="email" label="Email"
+                value="{!v.simpleNewContact.Email}" />
+ 
+     
+            </div>
+             
+        </aura:if>
+    <!--<lightning:button label="Cancel" onclick="{!c.handleCancel}" class="slds-m-top_medium" />-->
+    <lightning:button label="Cancel" onclick="{!c.showModal}" class="slds-m-top_medium" />
+    <lightning:button label="Save Contact" onclick="{!c.handleSaveContact}"    
+               variant="brand" class="slds-m-top_medium"/>
+    
+    
+
+</div>
+     
+</aura:component>
+
+controller
+
+({
+    doInit: function(component, event, helper) {
+        console.log(component.get("v.recordId"));
+        
+        if(component.get("v.recordId") == '' || component.get("v.recordId") == 'undefined' ){
+   component.find("contactRecordCreator").getNewRecord(
+            "Contact", // objectApiName
+            null, // recordTypeId
+           true, // skip cache?
+            $A.getCallback(function() {
+                var rec = component.get("v.newContact");
+                var error = component.get("v.newContactError");
+                console.log(rec.id);
+                if(error || (rec === null)) {
+                    console.log("Error initializing record template: " + error);
+                }
+                else {
+                    console.log("Record template initialized: " + rec.sobjectType);
+                   
+                }
+            })
+        );
+        } 
+     //  component.set("v.showandhide",true);
+    },
+
+ unhidesection:function(component,event,helper){
+       
+      // component.set("v.showandhide",true);
+console.log(component.get("v.showandhide"));
+      if (component.get("v.showandhide") == true)
+           component.set("v.showandhide",false);
+        else
+           component.set("v.showandhide",true);
+    }
+     ,
+   
+       handleSaveContact: function(component, event, helper) {
+        component.find("contactRecordCreator").saveRecord($A.getCallback(function(saveResult) {
+            // NOTE: If you want a specific behavior(an action or UI behavior) when this action is successful 
+            // then handle that in a callback (generic logic when record is changed should be handled in recordUpdated event handler)
+            if (saveResult.state === "SUCCESS" || saveResult.state === "DRAFT") {
+                // handle component related logic in event handler
+                console.log("record saved"+saveResult.state);
+                console.log("record id"+saveResult.recordId);
+                 var event = $A.get('e.force:navigateToSObject');
+            	event.setParams({                
+                "recordId":  saveResult.recordId,                 
+                "slideDevName": "related"                
+            }); 
+            event.fire();                    
+            } else if (saveResult.state === "INCOMPLETE") {
+                console.log("User is offline, device doesn't support drafts.");
+            } else if (saveResult.state === "ERROR") {
+                console.log('Problem saving record, error: ' + JSON.stringify(saveResult.error));
+            } else {
+                console.log('Unknown problem, state: ' + saveResult.state + ', error: ' + JSON.stringify(saveResult.error));
+            }
+        }));
+    },
+    
+    showModal: function(component, event, helper) {
+   // debugger;
+       $A.util.removeClass(component.find("god"),'toggle');
+       $A.util.addClass(component.find("god"),'slds-modal__container');
+        
+        //$A.get("e.force:closeQuickAction").fire();
+    },
+
+    handlerecordUpdated: function(component, event, helper) {
+        var eventParams = event.getParams();
+        if(eventParams.changeType === "CHANGED") {
+            // get the fields that changed for this record
+            var changedFields = eventParams.changedFields;
+            console.log('Fields that are changed: ' + JSON.stringify(changedFields));
+            // record is changed, so refresh the component (or other component logic)
+            var resultsToast = $A.get("e.force:showToast");
+            resultsToast.setParams({
+                "title": "Saved",
+                "message": "The record was updated."
+            });
+            resultsToast.fire();
+
+        } else if(eventParams.changeType === "LOADED") {
+            // record is loaded in the cache
+        } else if(eventParams.changeType === "REMOVED") {
+            // record is deleted and removed from the cache
+        } else if(eventParams.changeType === "ERROR") {
+            // there’s an error while loading, saving or deleting the record
+        }
+     },
+    handleCancel: function(component, event, helper) {
+  // debugger;
+      
+         var cmpTarget2 = component.find('god');
+      
+        $A.util.removeClass(cmpTarget2, 'slds-modal__container');
+          $A.util.addClass(cmpTarget2, 'toggle');
+        
+         $A.util.removeClass(component.find('section1'), 'slds-modal slds-fade-in-open');
+         $A.util.removeClass(component.find('modcont'), 'slds-modal__content slds-p-around_medium');
+       
+        //$A.get("e.force:closeQuickAction").fire();
+    }
+    
+})
+
+helper
+({
+    validateContactForm: function(component) {
+        var validContact = true;
+
+         // Show error messages if required fields are blank
+     /*  var allValid = component.find('contactField').reduce(function (validFields, inputCmp) {
+            inputCmp.showHelpMessageIfInvalid();
+            return validFields && inputCmp.get('v.validity').valid;
+        }, true);
+
+        if (allValid) {
+            // Verify we have an account to attach it to
+            var account = component.get("v.account");
+            if($A.util.isEmpty(account)) {
+                validContact = false;
+                console.log("Quick action context doesn't have a valid account.");
+            }
+        	return(validContact);
+            
+        }  */
+        return true;
+	}
+       
+})
+
+.THIS.toggle {
+    display: none;
+}
+.THIS.toggle1 {
+    display: inline;
+}
