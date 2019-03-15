@@ -8,3 +8,5 @@
             action.setParams({Name1 : component.get("v.recordId"),passeddata: desc });
             
         }    
+
+implements="lightning:actionOverride,force:lightningQuickAction,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,lightning:actionOverride,force:hasRecordId"
