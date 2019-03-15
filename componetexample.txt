@@ -4,26 +4,33 @@
         var name = component.get("v.conObj.LastName");
         var email = component.get("v.conObj.Email");
         var desc = component.get("v.conObj.Description");
+        var redirectid =''
       
         if(component.get("v.recordId")=='' || component.get("v.recordId")==null){        
             
             var action = component.get("c.insertrecords");
-            action.setParams({Name1 : name,Email : email });            
+            action.setParams({Name1 : name,Email : email }); 
+            
         }else{
             
             var action = component.get("c.updaterecords");
             action.setParams({recid: component.get("v.recordId"),passeddata: desc });
-            
+           
         }    
         
         action.setCallback(this,function(a){
             console.log(a.getReturnValue());
+            if(component.get("v.recordId")=='' || component.get("v.recordId")==null){
+                redirectid  = a.getReturnValue();
+            }else{
+                 redirectid  =component.get("v.recordId");
+            }
             
             var event = $A.get('e.force:navigateToSObject');
             event.setParams({
                 
-                "recordId":  a.getReturnValue(),                 
-                "slideDevName": "related"
+                "recordId":  redirectid,       //pass id1          
+                "slideDevName": "detail"
                 
             }); 
             event.fire();  
@@ -40,7 +47,6 @@
         
     }
 })
-
 
 <aura:component Controller="Contactcreator" implements="lightning:actionOverride,force:lightningQuickAction,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,lightning:actionOverride,force:hasRecordId" access="global" >
     <aura:attribute name="conObj" type="Contact" default="{'sobjectType':'Contact'}"/>
