@@ -1,6 +1,7 @@
 <aura:component implements="lightning:actionOverride,force:lightningQuickAction,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,lightning:actionOverride,force:hasRecordId" >
      <aura:dependency resource="markup://force:navigateToSObject" type="EVENT"/>
    
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
     <aura:attribute name="newContact" type="Object" access="private"/>
     <aura:attribute name="simpleNewContact" type="Object" access="private"/>
     <aura:attribute name="newContactError" type="String" access="private"/>
@@ -14,12 +15,12 @@
         targetFields="{!v.simpleNewContact}"
         targetError="{!v.newContactError}" 
         recordUpdated ="{!c.handlerecordUpdated}"
-        mode="EDIT"
+        mode="EDIT"         
         />
     
-    
+    <!--  recordUpdated ="{!c.handlerecordUpdated}"
+        mode="EDIT"-->
 
-   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
 
 <div aura:id ="god" style="height: 640px;" class="toggle">
  <section aura:id="section1" role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
@@ -105,13 +106,13 @@
      
 </aura:component>
 
-controller
 
 ({
     doInit: function(component, event, helper) {
-        console.log(component.get("v.recordId"));
+        console.log(component.get("v.recordId")+'test');
+        debugger;
         
-        if(component.get("v.recordId") == '' || component.get("v.recordId") == 'undefined' ){
+        if(component.get("v.recordId") == '' || component.get("v.recordId") == 'undefined' || component.get("v.recordId") == null ){
    component.find("contactRecordCreator").getNewRecord(
             "Contact", // objectApiName
             null, // recordTypeId
@@ -129,8 +130,7 @@ controller
                 }
             })
         );
-        } 
-     //  component.set("v.showandhide",true);
+        }
     },
 
  unhidesection:function(component,event,helper){
@@ -145,6 +145,7 @@ console.log(component.get("v.showandhide"));
      ,
    
        handleSaveContact: function(component, event, helper) {
+           debugger;
         component.find("contactRecordCreator").saveRecord($A.getCallback(function(saveResult) {
             // NOTE: If you want a specific behavior(an action or UI behavior) when this action is successful 
             // then handle that in a callback (generic logic when record is changed should be handled in recordUpdated event handler)
@@ -213,36 +214,3 @@ console.log(component.get("v.showandhide"));
     }
     
 })
-
-helper
-({
-    validateContactForm: function(component) {
-        var validContact = true;
-
-         // Show error messages if required fields are blank
-     /*  var allValid = component.find('contactField').reduce(function (validFields, inputCmp) {
-            inputCmp.showHelpMessageIfInvalid();
-            return validFields && inputCmp.get('v.validity').valid;
-        }, true);
-
-        if (allValid) {
-            // Verify we have an account to attach it to
-            var account = component.get("v.account");
-            if($A.util.isEmpty(account)) {
-                validContact = false;
-                console.log("Quick action context doesn't have a valid account.");
-            }
-        	return(validContact);
-            
-        }  */
-        return true;
-	}
-       
-})
-
-.THIS.toggle {
-    display: none;
-}
-.THIS.toggle1 {
-    display: inline;
-}
