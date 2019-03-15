@@ -1,0 +1,132 @@
+<aura:component Controller="Contactcreator" implements="lightning:actionOverride,force:lightningQuickAction,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,lightning:actionOverride,force:hasRecordId" access="global" >
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="conObj" type="Contact" default="{'sobjectType':'Contact'}"/>
+    <aura:attribute name="truthy" type="Boolean" default="false"/>
+    
+    
+     <fieldset class="slds-form-element slds-form-element_compound">
+<legend class="slds-form-element__legend slds-form-element__label">Contact Details</legend>
+<div class="slds-form-element__control">
+<div class="slds-form-element__row">
+<div class="slds-size_1-of-3">
+<div class="slds-form-element">
+
+<div class="slds-form-element__control">
+ <ui:inputtext label="Name" value="{!v.conObj.LastName}"/> 
+</div>
+</div>
+
+
+({
+    
+   
+    
+    doInit: function(component, event, helper){
+       
+        if(component.get("v.recordId")==undefined || component.get("v.recordId")==null)
+        {  }else
+        {
+            // debugger;
+            var action = component.get("c.fetchcontact");
+            action.setParams({Idd : component.get("v.recordId") }); 
+            
+            action.setCallback(this,function(a){
+                component.set("v.conObj",a.getReturnValue());
+                console.log(component.get("v.conObj"));
+             //   component.set("v.conObj.LastName",a.getReturnValue().LastName);
+                   console.log(component.get("v.conObj.LastName"));
+       
+            });
+        }
+    },
+    showdesc: function(component,event,helper){
+       // component.set("v.truthy","true";)
+        if (component.get("v.truthy") == "true") 
+             component.set("v.truthy","false");
+             else
+                  component.set("v.truthy","true");
+    },
+    savedata: function(component, event, helper) {
+        
+        var name = component.get("v.conObj.LastName");
+        var email = component.get("v.conObj.Email");
+        var desc = component.get("v.conObj.Description");
+        var redirectid =''
+        
+        if(component.get("v.recordId")=='' || component.get("v.recordId")==null){        
+            
+            var action = component.get("c.insertrecords");
+            action.setParams({Name1 : name,Email : email }); 
+            
+        }else{
+            
+            var action = component.get("c.updaterecords");
+            action.setParams({recid: component.get("v.recordId"),passeddata: desc });
+            
+        }    
+        
+        action.setCallback(this,function(a){
+            console.log(a.getReturnValue());
+            if(component.get("v.recordId")=='' || component.get("v.recordId")==null){
+                redirectid  = a.getReturnValue();
+            }else{
+                redirectid  =component.get("v.recordId");
+            }
+            
+            var event = $A.get('e.force:navigateToSObject');
+            event.setParams({
+                
+                "recordId":  redirectid,       //pass id1          
+                "slideDevName": "detail"
+                
+            }); 
+            event.fire();  
+        } );
+        $A.enqueueAction(action);
+    },
+    close1:function(component){
+        
+        component.set("v.truthy","false");
+        
+    }
+})
+</div>
+<div class="slds-size_1-of-3">
+<div class="slds-form-element">
+
+<div class="slds-form-element__control">
+   <ui:inputtext label="Email" value="{!v.conObj.Email}"/> 
+</div>
+</div>
+</div>
+</div>
+</div>
+</fieldset>
+	
+   <aura:if isTrue="{!v.truthy}">
+    <fieldset class="slds-form-element slds-form-element_compound">
+   
+<div class="slds-form-element__control">
+<div class="slds-form-element__row">
+<div class="slds-size_1-of-3">
+<div class="slds-form-element">
+
+<div class="slds-form-element__control">
+   <ui:inputtext label="Description" value="{!v.conObj.Description}"/> 
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</fieldset>
+           </aura:if>
+     
+	  <lightning:button variant="brand" label="Save"  onclick="{!c.savedata}"/> 
+    <button class="slds-button slds-button_brand">Cancel</button>
+     <lightning:button variant="brand" label="Toggle description Field"  onclick="{!c.showdesc}"/> 
+ 
+ 
+
+    
+</aura:component>
