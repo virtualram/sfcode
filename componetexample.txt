@@ -1,0 +1,55 @@
+({
+    savedata: function(component, event, helper) {
+        
+        var name = component.get("v.conObj.LastName");
+        var email = component.get("v.conObj.Email");
+        var desc = component.get("v.conObj.Description");
+      
+        if(component.get("v.recordId")=='' || component.get("v.recordId")==null){        
+            
+            var action = component.get("c.insertrecords");
+            action.setParams({Name1 : name,Email : email });            
+        }else{
+            
+            var action = component.get("c.updaterecords");
+            action.setParams({recid: component.get("v.recordId"),passeddata: desc });
+            
+        }    
+        
+        action.setCallback(this,function(a){
+            console.log(a.getReturnValue());
+            
+            var event = $A.get('e.force:navigateToSObject');
+            event.setParams({
+                
+                "recordId":  a.getReturnValue(),                 
+                "slideDevName": "related"
+                
+            }); 
+            event.fire();  
+            
+            
+            
+            
+        } );
+        $A.enqueueAction(action);
+    },
+    close1:function(component){
+        
+        component.set("v.truthy","false");
+        
+    }
+})
+
+
+<aura:component Controller="Contactcreator" implements="lightning:actionOverride,force:lightningQuickAction,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,lightning:actionOverride,force:hasRecordId" access="global" >
+    <aura:attribute name="conObj" type="Contact" default="{'sobjectType':'Contact'}"/>
+    <aura:attribute name="truthy" type="Boolean" default="false"/>
+    <ui:inputtext label="Name" value="{!v.conObj.LastName}"/> 
+  
+    <ui:inputtext label="Email" value="{!v.conObj.Email}"/> 
+    <ui:inputtext label="Description" value="{!v.conObj.Description}"/> 
+    <lightning:button variant="brand" label="Save"  onclick="{!c.savedata}"/> 
+     
+    
+</aura:component>
