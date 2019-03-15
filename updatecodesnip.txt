@@ -1,0 +1,5 @@
+  try{
+                Contact conttoupdate= new Contact();
+                conttoupdate= [select id,department from contact where id =:recid ];
+                conttoupdate.department = passeddata;
+                update conttoupdate;
