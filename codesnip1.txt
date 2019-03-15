@@ -1,0 +1,10 @@
+   if(component.get("v.recordId")=='' || component.get("v.recordId")==null){        
+            
+            var action = component.get("c.insertrecords");
+            action.setParams({Name1 : name,Email : email });            
+        }else{
+            
+            var action = component.get("c.updaterecords");
+            action.setParams({Name1 : component.get("v.recordId"),passeddata: desc });
+            
+        }    
