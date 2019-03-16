@@ -1,0 +1,16 @@
+global with sharing class SoaprequestcreateAccount{
+
+//webservice String Accname;
+ 
+
+webservice static String CrAccount(String Accname){
+ Account acc;
+String idd;
+acc = new Account(Name = Accname);
+insert acc;
+idd =acc.id;
+return idd;
+}
+
+
+}
