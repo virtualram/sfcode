@@ -1,0 +1,7 @@
+1. create new project with manifest
+2.sfdx force:project:create –projectname
+3.sfdx force:auth:web:login --setdefaultdevhubusername --setalias sfdcevangel
+browser will open ,login with correct details
+4.sfdx force:org:open -u
+5. create package .xml next to json file then navigate to folder and retriev
+6. sfdx force:mdapi:retrieve -r metadata -u narenrr@yahoo.com -k package.xml
